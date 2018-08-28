@@ -12,51 +12,86 @@
 	<name>myframework-parent</name>
 	<description></description>
 
-	<modules>
-		<module>myframework-core</module>
-	</modules>
-
+	<!-- 继承 spring-boot-starter-parent 模块 -->
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.0.4.RELEASE</version>
-		<relativePath /> <!-- lookup parent from repository -->
+		<relativePath />
 	</parent>
 
+	<!-- 定义当前模块的子模块 -->
+	<modules>
+		<module>myframework-core</module>
+	</modules>
+
+	<!-- 定义属性变量，给其它地方使用 -->
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
-		<mybatis-spring-boot-starter.version>1.3.2</mybatis-spring-boot-starter.version>
+		<mybatis-plus-boot-starter.version>3.0-RC2</mybatis-plus-boot-starter.version>
+		<HikariCP.version>3.2.0</HikariCP.version>
+		<lombok.version>1.18.2</lombok.version>
+		<postgresql.version>9.4.1212</postgresql.version>
+		<fastjson.version>1.2.9</fastjson.version>
 	</properties>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.mybatis.spring.boot</groupId>
-			<artifactId>mybatis-spring-boot-starter</artifactId>
-			<version>${mybatis-spring-boot-starter.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-	</dependencies>
+	<!-- 注意： 1.使用 dependencies 方式添加的依赖会被子模块继承，在子模块中会自动添加依赖，无需重复添加； 2.使用 dependencyManagement 
+		+ dependencies 方式添加的依赖不会被子模块继承， 子模块需要在 dependencies 中重新添加依赖，子依赖会继承父依赖定义的属性； 
+		3.可以通过第二种方式在父模块管理依赖及依赖的版本，在子模块里只需引入模块无需关注版本 ； -->
+	<dependencyManagement>
+		<dependencies>
+
+			<!-- 添加 MybatisPlus 依赖 -->
+			<dependency>
+				<groupId>com.baomidou</groupId>
+				<artifactId>mybatis-plus-boot-starter</artifactId>
+				<version>${mybatis-plus-boot-starter.version}</version>
+			</dependency>
+
+			<!-- 重写 SpringBoot 默认的数据库连接池版本 HikariCP -->
+			<dependency>
+				<groupId>com.zaxxer</groupId>
+				<artifactId>HikariCP</artifactId>
+				<version>${HikariCP.version}</version>
+			</dependency>
+
+			<!-- 给类动态生成：Getter、Setter、Constructor及链式调用等等 -->
+			<dependency>
+				<groupId>org.projectlombok</groupId>
+				<artifactId>lombok</artifactId>
+				<version>${lombok.version}</version>
+				<scope>provided</scope>
+			</dependency>
+
+			<!-- PostgreSQL JDBC驱动 -->
+			<dependency>
+				<groupId>org.postgresql</groupId>
+				<artifactId>postgresql</artifactId>
+				<version>${postgresql.version}</version>
+				<scope>runtime</scope>
+			</dependency>
+			
+			<!-- 添加 FastJson 的依赖 -->
+			<dependency>
+				<groupId>com.alibaba</groupId>
+				<artifactId>fastjson</artifactId>
+				<version>${fastjson.version}</version>
+			</dependency>
+
+		</dependencies>
+	</dependencyManagement>
 
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
